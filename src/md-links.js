@@ -7,9 +7,19 @@ const mdLinks = (args) => {
 
   // captura de la ruta a partir del array de args
   const catchedPath = args[2];
+  console.log(catchedPath);
+
+  console.log("RUTA ABSOLUTA? ", path.isAbsolute(catchedPath));
+
+  const converterPath = (pathToConvert) => {
+    let pathToConvertResult;
+    path.isAbsolute(pathToConvert) ? pathToConvertResult = pathToConvert : pathToConvertResult = path.resolve(pathToConvert).normalize();
+    return pathToConvertResult;
+  }
 
   // convierte la ruta capturada a una ruta absoluta
-  const absolutePath = path.resolve(catchedPath).normalize();
+  const absolutePath = converterPath(catchedPath);
+  console.log("path", absolutePath);
 
   // verifica si la ruta existe
   const validatePath = (path) => fs.existsSync(path);
@@ -18,7 +28,7 @@ const mdLinks = (args) => {
   const fileOrDirectory =  (pathToCheck) =>{
     fs.stat(pathToCheck, (err, stats) => {
         if (err) throw err;
-        console.log('soy directorio?', stats.isDirectory());
+        console.log('DIRECTORIO?', stats.isDirectory());
     });
   }
 
@@ -47,12 +57,12 @@ const mdLinks = (args) => {
 // se exporta el modulo para usar funcion mdLinks
 module.exports = mdLinks;
 
-
-// const extension = path.extname('./prueba.md'); //obtener la extención del archivo
+// obtiene extención del archivo
+// const extension = path.extname('./prueba.md');
 // console.log(extension);
 
-// otenemos la ruta absoluta del directorio y del archivo actual
-// const dirName = path.dirname(__dirname); //El dirname obtiene la ruta  
-// const fileName = path.dirname(__filename); //__filename es el archivo actual en el que estoy
+// obtiene la ruta absoluta del directorio y del archivo actual
+// const dirName = path.dirname(__dirname);  
+// const fileName = path.dirname(__filename);
 // console.log('directory-name :', dirName, 'file-name :', fileName);
 
