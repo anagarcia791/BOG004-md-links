@@ -1,0 +1,1 @@
+const funcionX = () => console.log('otro');
