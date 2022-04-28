@@ -14,38 +14,17 @@ const converterPath = (pathToConvert) => {
   return pathToConvertResult;
 };
 
-// funcion para verificar si la ruta existe
-const validatePath = (pathToValidate) => fs.existsSync(pathToValidate);
-
-// funcion para verificar si es un directorio
-const isDir = (pathToCheck) => {
-  const isDirResult = fs.statSync(pathToCheck).isDirectory();
-  return isDirResult;
-};
-
-// funcion para revisar documentos del directorio
-const dirFiles = (pathToCheck) => {
-  const arrayDirFiles = fs.readdirSync(pathToCheck);
-  return arrayDirFiles;
-};
-
-// funcion para revisar extencion de archivo
-const fileExtension = (filePath) => {
-  const extension = path.extname(filePath);
-  return extension;
-};
-
 // funcion RECURSIVA para extraer array de rutas de los archivos .md
 const getFilesMd = (arrayPaths, filePathAbsolute) => {
-  const isDirResult = isDir(filePathAbsolute);
+  const isDirResult = fs.statSync(filePathAbsolute).isDirectory(); // booleano
   if (isDirResult) { // es directorio consigue ruta de cada elemento y con ello invoca f recursiva
-    const dirFilesResult = dirFiles(filePathAbsolute);
+    const dirFilesResult = fs.readdirSync(filePathAbsolute); // array contenido dir
     dirFilesResult.forEach((dirFile) => {
       const dirPathFileAbs = path.join(filePathAbsolute, dirFile);
       getFilesMd(arrayPaths, dirPathFileAbs);
     });
   } else { // es archivo revisa si es .md y lo agrega al array de paths
-    const fileExtensionResult = fileExtension(filePathAbsolute);
+    const fileExtensionResult = path.extname(filePathAbsolute);
     if (fileExtensionResult === '.md') {
       arrayPaths.push(filePathAbsolute);
     }
@@ -53,10 +32,9 @@ const getFilesMd = (arrayPaths, filePathAbsolute) => {
   return arrayPaths;
 };
 
-// funcion para validación de ruta valida para ejecuta funcion recursiva | no valida retornar output
+// funcion para validación de ruta | valida y luego ejecutar f recursiva | no valida retornar output
 const pathValidation = (pathToVerify) => {
-  // invoca funcion validatePath
-  const resultValidatePath = validatePath(pathToVerify);
+  const resultValidatePath = fs.existsSync(pathToVerify);
   console.log('RUTA VALIDA? ', resultValidatePath);
 
   // se declara variable para capturar array de archivos .md
@@ -75,10 +53,39 @@ const pathValidation = (pathToVerify) => {
 };
 
 // funcion para leer contenido de un archivo
-const readFileContent = (pathToRead) => {
-  const content = fs.readFileSync(pathToRead, 'utf-8');
-  return content;
-};
+// const readFileContent = (pathToRead) => {
+//   fs.promises.readFile(pathToRead, 'UTF-8', (err, data) => {
+//     if (err) {
+//       const errMessage = 'No se puede leer el archivo suministrado';
+//       return errMessage;
+//     }
+//     // return Promise.all(data);
+//     // return data;
+//   });
+//   return Promise.all(data);
+// };
+
+// funcion para leer contenido de un archivo
+const readFileContent = (pathToRead) => new Promise((resolve) => {
+  fs.readFile(pathToRead, 'UTF-8', (err, data) => {
+    if (err) {
+      const errMessage = 'No se puede leer el archivo suministrado';
+      resolve(errMessage);
+    } else {
+      resolve(data);
+    }
+  });
+});
+
+const readingFile = (pathMd, regxLink) => readFileContent(pathMd)
+  .then((fileContent) => {
+    console.log('dataaa :(', fileContent);
+    const linksArr = fileContent.match(regxLink);
+    return linksArr;
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
 // funcion para capturar links de un archivo .md
 const getLinks = (pathMd) => {
@@ -87,11 +94,27 @@ const getLinks = (pathMd) => {
   const regxUrl = /\(((?:\/|https?:\/\/)[\w\d./?=#&_%~,.:-]+)\)/mg;
   const regxText = /\[[\w\s\d.()]+\]/;
 
-  // lectura de cada archivo .md
-  const fileContent = readFileContent(pathMd);
+  // // lectura de cada archivo .md
+  // const fileContent = readFileContent(pathMd);
+  // // extraccion de links que coinciden con regx se crea array
+  // const linksArray = fileContent.match(regxLink);
 
-  // extraccion de links que coinciden con regx se crea array
-  const linksArray = fileContent.match(regxLink);
+  // const array = '';
+  const linksArray = readingFile(pathMd, regxLink);
+  // let linksArray;
+
+  // readFileContent(pathMd)
+  //   .then((fileContent) => {
+  //     console.log('dataaa :(', fileContent);
+  //     linksArray = fileContent.match(regxLink);
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
+
+  console.log('links despues de async', linksArray);
+
+  // linksArray = [];
 
   if (linksArray === null) {
     return [];
@@ -119,8 +142,8 @@ const mdsArraysValidation = (mdsArray) => {
   if (mdsArray.length === 0) {
     validationResult = 'directorio vacio o archivo no tiene extención .md';
   } else if (typeof mdsArray !== 'string') {
-    const allLinksArray = mdsArray.map((file) => getLinks(file));
-    validationResult = allLinksArray.flat(); // .flat elimina array internos,junta todo en unico arr
+    // .flat elimina arr internos, y une todo en unico arr
+    validationResult = mdsArray.flatMap((file) => getLinks(file));
   } else {
     validationResult = mdsArray;
   }
