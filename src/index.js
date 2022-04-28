@@ -1,11 +1,11 @@
-//se importa modulo para traer función mdLinks
-const mdLinks = require('./md-links.js')
+// CommonJS Modules para: node method process y traer función mdLinks de md-links.js
+const process = require('process');
+const mdLinks = require('./md-links');
 
 // node methods process
-const process = require('process');
 
 // captura de argumentos de terminal
-const arguments = process.argv;
+const terminalArg = process.argv;
 
-//Se invoca la función mdLinks
-mdLinks(arguments);
+// Se invoca la función mdLinks
+mdLinks(terminalArg);

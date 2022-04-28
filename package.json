@@ -3,5 +3,16 @@
   "version": "0.1.0",
   "engines": {
     "node": ">=14.x"
+  },
+  "scripts": {
+    "eslint": "eslint --ext .js src/ test/",
+    "stylelint": "stylelint --aei src/**/*.css",
+    "pretest": "npm run htmlhint && npm run eslint && npm run stylelint",
+    "test": "jest --env=jsdom --coverage"
+  },
+  "devDependencies": {
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
   }
 }
