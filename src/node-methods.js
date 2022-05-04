@@ -1,6 +1,13 @@
-// CommonJS Modules para: node method filesystem - path
+// CommonJS Modules para: node methods filesystem - path | axios
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
+
+/**
+ *
+ * @param {*} pathToConvert
+ * @returns
+ */
 
 // funcion para convertir ruta capturada a una ruta absoluta
 const converterPath = (pathToConvert) => {
@@ -8,15 +15,14 @@ const converterPath = (pathToConvert) => {
   const pathIsAbsolute = path.isAbsolute(pathToConvert);
   if (pathIsAbsolute) {
     pathToConvertResult = pathToConvert;
-  } else {
-    pathToConvertResult = path.resolve(pathToConvert).normalize();
   }
+  pathToConvertResult = path.resolve(pathToConvert).normalize();
   return pathToConvertResult;
 };
 
 // funcion RECURSIVA para extraer array de rutas de los archivos .md
 const getFilesMd = (arrayPaths, filePathAbsolute) => {
-  const isDirResult = fs.statSync(filePathAbsolute).isDirectory(); // booleano
+  const isDirResult = fs.statSync(filePathAbsolute).isDirectory(); // es directorio? booleano
   if (isDirResult) { // es directorio consigue ruta de cada elemento y con ello invoca f recursiva
     const dirFilesResult = fs.readdirSync(filePathAbsolute); // array de contenido directorio
     dirFilesResult.forEach((dirFile) => {
@@ -32,17 +38,15 @@ const getFilesMd = (arrayPaths, filePathAbsolute) => {
   return arrayPaths;
 };
 
-// funcion para validación de ruta | valida y luego ejecutar f recursiva | no valida retornar output
+// funcion para validación de ruta | valida: ejecuta f recursiva | no valida: retorna output
 const pathValidation = (pathToVerify) => {
-  const resultValidatePath = fs.existsSync(pathToVerify);
+  const resultValidatePath = fs.existsSync(pathToVerify); // ruta valida ? booleano
 
   // se declara variable para capturar array de archivos .md
-  const arrayPathsMd = [];
   let getFilesMdResult;
 
-  // condicional de programa para el resultado de validacion de ruta
-  if (resultValidatePath) {
-    getFilesMdResult = getFilesMd(arrayPathsMd, pathToVerify); // invocando f recursiva
+  if (resultValidatePath) { // si ruta valida invoca f recursiva
+    getFilesMdResult = getFilesMd([], pathToVerify);
   } else {
     const invalidPath = 'Ruta no valida';
     return invalidPath;
@@ -71,21 +75,20 @@ const getLinks = (pathMd) => new Promise((resolve, reject) => {
 
   readFileContent(pathMd)
     .then((fileContent) => {
-      // revisa el contenido del archivo para capturar links
-      const linksArray = fileContent.match(regxLink);
+      const linksArray = fileContent.match(regxLink); // revisa content archivo para capturar links
 
-      if (linksArray === null) {
+      if (linksArray === null) { // si no hay links en archivo retorna []
+        resolve([]);
         return [];
       }
 
-      // se transforma array de linksArray para entregar la forma de objeto
-      const turnedLinksArray = linksArray.map((myLinks) => {
+      const turnedLinksArray = linksArray.map((myLinks) => { // transforma arr links y entrega objt
         const myhref = myLinks.match(regxUrl).join().slice(1, -1); // URL encontradas
         const mytext = myLinks.match(regxText).join().slice(1, -1); // texto que hace ref a URL
         return {
           href: myhref,
-          text: mytext,
-          fileName: pathMd, // ruta donde se encuentra URL
+          text: mytext.substring(0, 50),
+          fileName: path.basename(pathMd), // ruta de URL
         };
       });
       resolve(turnedLinksArray);
@@ -96,115 +99,80 @@ const getLinks = (pathMd) => new Promise((resolve, reject) => {
     });
 });
 
-const otranueva = (fileResult, mdsArray) => {
-  mdsArray.forEach((file) => {
-    const otra = getLinks(file)
-      .then((linksArrayResult) => {
-        const linksObjArray = linksArrayResult;
-        return linksObjArray;
+// funcion para crear array de objetos con links
+const allLinksObjArr = (mdsArray) => new Promise((resolve, reject) => {
+  const linksObjArr = [];
+  mdsArray.map((file) => getLinks(file)
+    .then((linksArrayResult) => {
+      linksObjArr.push(linksArrayResult); // [[{l1},{l2}...],[{l1}...],[{l1}...]] arr con arr de obj
+      if (linksObjArr.length === mdsArray.length) {
+        resolve(linksObjArr.flat());
+      }
+      return linksObjArr.flat();
+    })
+    .catch((error) => {
+      reject(error);
+    }));
+});
+
+// funcion para peticion HTTP
+const httpPetition = (linksObjArr) => {
+  const axiosPromises = linksObjArr.map((link) => { // transforma arr de objt con peticion axios
+    const axiosPetition = axios.get(link.href) // hace peticion axios de cada href
+      .then((axiosResult) => {
+        const successObject = {
+          ...link,
+          status: axiosResult.status,
+          statusText: 'ok',
+        };
+        return successObject; // retorna nuevo obj con la informacion inicial y status - statusText
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        const failObject = {
+          ...link,
+          status: 404,
+          statusText: 'fail',
+        };
+        return failObject; // retorna nuevo obj con la informacion inicial y status - statusText
       });
-    // eslint-disable-next-line no-param-reassign
-    fileResult = otra;
-    // fileResult = JSON.parse(JSON.stringify(otra));
+    return axiosPetition; // retorna nuevo objt con respuesta de successObject o failObject
   });
-  return fileResult;
+  return Promise.allSettled(axiosPromises); // retorna nuevo objt segun respuesta de cada link
 };
 
 // funcion para validación de array de rutas
-const mdsArraysValidation = (mdsArray) => new Promise((resolve) => {
+const mdsArraysValidation = (args, mdsArray) => new Promise((resolve, reject) => {
   let validationResult;
   if (mdsArray.length === 0) {
-    validationResult = 'directorio vacio o el archivo no es de extención .md';
+    validationResult = 'Directorio vacio o el archivo no es .md';
     resolve(validationResult);
   } else if (typeof mdsArray !== 'string') { // [.md, .md, .md] array de mds
-    let fileResult;
-    validationResult = otranueva(fileResult, mdsArray);
-    console.log('resultado MAP', validationResult);
-    resolve(validationResult);
+    allLinksObjArr(mdsArray)
+      .then((linksObj) => {
+        if (args.includes('--validate')) {
+          httpPetition(linksObj) // invoca funcion de peticion http
+            .then((httpLinksObj) => {
+              resolve(httpLinksObj);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        } else {
+          resolve(linksObj); // resuelve objeto solamente con: fileName - href - text
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
   } else {
     validationResult = mdsArray;
     resolve(validationResult);
   }
 });
 
+// se exportan funciones para mdLinks
 module.exports = {
   converterPath,
   pathValidation,
   mdsArraysValidation,
 };
-
-// validationResult = mdsArray.flatMap((file) => getLinks(file));
-// validationResult = mdsArray.map((file) => {
-//   return getLinks(file)
-//     .then((linksArrayResult) => {
-//       console.log('array links', linksArrayResult);
-//       validationResult = linksArrayResult;
-//       resolve(validationResult);
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-//   console.log('RES22222222', linksArrayResult);
-//   return true;
-// });
-
-// validationResult = mdsArray.map((file) => getLinks(file)
-//       .then((linksArrayResult) => linksArrayResult).catch((error) => error));
-
-// validationResult = mdsArray.map((file) => getLinks(file)
-//       .then((linksArrayResult) => linksArrayResult)
-//       .catch((error) => {
-//         console.log(error);
-//       }));
-
-// // validationResult = [];
-// mdsArray.forEach((file) => {
-//   const fileResult = getLinks(file)
-//     .then((linksArrayResult) => {
-//       // validationResult = linksArrayResult;
-//       // console.log('resultado MAP', validationResult);
-//       // resolve(validationResult);
-//       const process = linksArrayResult;
-//       return process;
-//       // validationResult = linksArrayResult;
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-//   // console.log('resultado MAP', validationResult);
-//   // resolve(validationResult);
-//   validationResult = fileResult;
-//   // console.log('resultado MAP', validationResult);
-//   // return validationResult;
-//   // return fileResult;
-// });
-
-//  // const fileResult = [];
-//  let fileResult;
-//  mdsArray.forEach((file) => {
-//    // const fileResult = getLinks(file)
-//    const otra = getLinks(file)
-//      .then((linksArrayResult) => {
-//        const linksObjArray = linksArrayResult;
-//        // console.log('intetnooooooo', linksObjArray);
-//        // const linksObjArray = Promise.allSettled(linksArrayResult);
-//        // const linksObjArray = Promise.all(linksArrayResult);
-//        return linksObjArray;
-//      })
-//      .catch((error) => {
-//        console.log(error);
-//      });
-//    // validationResult = fileResult;
-//    // return validationResult;
-//    // fileResult.push(otra);
-//    fileResult = otra; // hacer copia de otra a partir de JSON revisar
-//    // fileResult = [JSON.parse(JSON.stringify(otra))];
-//    return fileResult;
-//    // return otra;
-//  });
-//  validationResult = fileResult;
-//  // console.log('resultado MAP', validationResult);
-//  resolve(validationResult);

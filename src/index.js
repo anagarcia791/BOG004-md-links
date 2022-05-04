@@ -1,11 +1,29 @@
-// CommonJS Modules para: node method process y traer función mdLinks de md-links.js
-const process = require('process');
-const mdLinks = require('./md-links');
+// CommonJS Modules para: funciones de node-methods.js
+const { converterPath, pathValidation, mdsArraysValidation } = require('./node-methods');
 
-// node methods process
+/**
+ *
+ * @param {*} args;
+ * @returns;
+ */
 
-// captura de argumentos de terminal
-const terminalArg = process.argv;
+// funcion mdLinks
+const mdLinks = (args) => new Promise((resolve, reject) => {
+  // captura de la ruta a partir del array de args
+  const catchedPath = args[2];
 
-// Se invoca la función mdLinks
-mdLinks(terminalArg);
+  // invoca funcion converterPath
+  const absolutePath = converterPath(catchedPath);
+
+  // invoca funcion mdsArraysValidation con el resultado de pathValidation CALLBACK
+  mdsArraysValidation(args, pathValidation(absolutePath))
+    .then((result) => {
+      resolve(result);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+});
+
+// se exporta funcion mdLinks
+module.exports = mdLinks;
