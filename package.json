@@ -8,7 +8,7 @@
   "scripts": {
     "eslint": "eslint --ext .js src/ test/",
     "stylelint": "stylelint --aei src/**/*.css",
-    "pretest": "npm run eslint",
+    "pretest.out": "npm run eslint",
     "test": "jest --verbose --coverage"
   },
   "repository": {

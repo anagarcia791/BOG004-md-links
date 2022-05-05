@@ -79,7 +79,6 @@ const getLinks = (pathMd) => new Promise((resolve, reject) => {
 
       if (linksArray === null) { // si no hay links en archivo retorna []
         resolve([]);
-        return [];
       }
 
       const turnedLinksArray = linksArray.map((myLinks) => { // transforma arr links y entrega objt
@@ -92,7 +91,6 @@ const getLinks = (pathMd) => new Promise((resolve, reject) => {
         };
       });
       resolve(turnedLinksArray);
-      return turnedLinksArray;
     })
     .catch((error) => {
       reject(error);
