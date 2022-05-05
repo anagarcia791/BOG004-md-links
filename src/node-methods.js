@@ -1,13 +1,13 @@
-// CommonJS Modules para: node methods filesystem - path | axios
-const fs = require('fs');
-const path = require('path');
-const axios = require('axios');
-
 /**
  *
  * @param {*} pathToConvert
  * @returns
  */
+
+// CommonJS Modules para: node methods filesystem - path | axios
+const fs = require('fs');
+const path = require('path');
+const axios = require('axios');
 
 // funcion para convertir ruta capturada a una ruta absoluta
 const converterPath = (pathToConvert) => {
@@ -120,19 +120,11 @@ const httpPetition = (linksObjArr) => {
   const axiosPromises = linksObjArr.map((link) => { // transforma arr de objt con peticion axios
     const axiosPetition = axios.get(link.href) // hace peticion axios de cada href
       .then((axiosResult) => {
-        const successObject = {
-          ...link,
-          status: axiosResult.status,
-          statusText: 'ok',
-        };
+        const successObject = Object.assign(link, { status: axiosResult.status, statusText: 'ok' });
         return successObject; // retorna nuevo obj con la informacion inicial y status - statusText
       })
       .catch(() => {
-        const failObject = {
-          ...link,
-          status: 404,
-          statusText: 'fail',
-        };
+        const failObject = Object.assign(link, { status: 404, statusText: 'fail' });
         return failObject; // retorna nuevo obj con la informacion inicial y status - statusText
       });
     return axiosPetition; // retorna nuevo objt con respuesta de successObject o failObject

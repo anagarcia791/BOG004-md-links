@@ -1,10 +1,10 @@
-// CommonJS Modules para: chalk
-const chalk = require('chalk');
-
 /**
  *
  * @param {*} linksObjArr
  */
+
+// CommonJS Modules para: chalk
+const chalk = require('chalk');
 
 // funcion output sin options
 const outputWithoutVS = (linksObjArr) => {
@@ -58,13 +58,7 @@ const outputWithS = (linksObjArr) => {
   const totalLinks = linksObjArr.length;
   const unique = [...new Set(linksObjArr.map((link) => link.href))];
   const uniqueLinks = unique.length;
-  // console.log(
-  //   chalk.white('Total:'),
-  //   chalk.cyan(totalLinks),
-  //   chalk.white('Unique:'),
-  //   chalk.green(uniqueLinks),
-  // );
-  console.table({ totalLinks, uniqueLinks });
+  console.table({ TOTAL: totalLinks, UNIQUE: uniqueLinks });
 };
 
 // funcion output con --validate y --stats
@@ -75,15 +69,7 @@ const outputWithVS = (linksObjArr) => {
   const uniqueLinks = unique.length;
   const broken = linksObjArr.filter((link) => link.value.statusText !== 'ok');
   const brokenLinks = broken.length;
-  // console.log(
-  //   chalk.white('Total:'),
-  //   chalk.cyan(totalLinks),
-  //   chalk.white('Unique:'),
-  //   chalk.green(uniqueLinks),
-  //   chalk.white('Broken:'),
-  //   chalk.red(brokenLinks),
-  // );
-  console.table({ totalLinks, uniqueLinks, brokenLinks });
+  console.table({ TOTAL: totalLinks, UNIQUE: uniqueLinks, BROKEN: brokenLinks });
 };
 
 // funcion primer output sin options
@@ -93,7 +79,7 @@ const finalOutput = (args, linksObjectArr) => {
     console.log(chalk.redBright.bold(linksObjectArr));
   } else if (linksObjectArr.length === 0) {
     console.log(chalk.redBright.bold('Archivo no contiene links'));
-  } else if (argsStr === '3') {
+  } else if (argsStr === '1') {
     console.log(chalk.magentaBright.bold('✦──✦──LINKS ENCONTRADOS──✦──✦'));
     outputWithoutVS(linksObjectArr);
   } else if (args.includes('--validate') && !args.includes('--stats')) {

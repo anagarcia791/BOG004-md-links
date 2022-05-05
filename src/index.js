@@ -1,19 +1,25 @@
+/**
+ *
+ * @param {*} path
+ * @param {*} options
+ * @returns
+ */
+
 // CommonJS Modules para: funciones de node-methods.js
 const { converterPath, pathValidation, mdsArraysValidation } = require('./node-methods');
 
-/**
- *
- * @param {*} args;
- * @returns;
- */
-
 // funcion mdLinks
-const mdLinks = (args) => new Promise((resolve, reject) => {
-  // captura de la ruta a partir del array de args
-  const catchedPath = args[2];
-
+const mdLinks = (path, options = { validate: false }) => new Promise((resolve, reject) => {
   // invoca funcion converterPath
-  const absolutePath = converterPath(catchedPath);
+  const absolutePath = converterPath(path);
+
+  // variable para crear array de validate true
+  const args = [];
+
+  // condicional para revisar si validate es true
+  if (options.validate === true) {
+    args.push('--validate');
+  }
 
   // invoca funcion mdsArraysValidation con el resultado de pathValidation CALLBACK
   mdsArraysValidation(args, pathValidation(absolutePath))
