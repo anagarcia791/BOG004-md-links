@@ -133,7 +133,7 @@ const httpPetition = (linksObjArr) => {
 };
 
 // funcion para validación de array de rutas
-const mdsArraysValidation = (args, mdsArray) => new Promise((resolve, reject) => {
+const mdsArraysValidation = (option, mdsArray) => new Promise((resolve, reject) => {
   let validationResult;
   if (mdsArray.length === 0) {
     validationResult = 'Directorio vacio o el archivo no es .md';
@@ -141,7 +141,7 @@ const mdsArraysValidation = (args, mdsArray) => new Promise((resolve, reject) =>
   } else if (typeof mdsArray !== 'string') { // [.md, .md, .md] array de mds
     allLinksObjArr(mdsArray)
       .then((linksObj) => {
-        if (args.includes('--validate')) {
+        if (option.validate === true) {
           httpPetition(linksObj) // invoca funcion de peticion http
             .then((httpLinksObj) => {
               resolve(httpLinksObj);

@@ -13,16 +13,8 @@ const mdLinks = (path, options = { validate: false }) => new Promise((resolve, r
   // invoca funcion converterPath
   const absolutePath = converterPath(path);
 
-  // variable para crear array de validate true
-  const args = [];
-
-  // condicional para revisar si validate es true
-  if (options.validate === true) {
-    args.push('--validate');
-  }
-
   // invoca funcion mdsArraysValidation con el resultado de pathValidation CALLBACK
-  mdsArraysValidation(args, pathValidation(absolutePath))
+  mdsArraysValidation(options, pathValidation(absolutePath))
     .then((result) => {
       resolve(result);
     })
