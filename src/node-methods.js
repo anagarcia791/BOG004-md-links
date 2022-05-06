@@ -12,7 +12,7 @@ const axios = require('axios');
 // funcion para convertir ruta capturada a una ruta absoluta
 const converterPath = (pathToConvert) => {
   let pathToConvertResult;
-  const pathIsAbsolute = path.isAbsolute(pathToConvert);
+  const pathIsAbsolute = path.isAbsolute(pathToConvert); // ruta absoluta? booleano
   if (pathIsAbsolute) {
     pathToConvertResult = pathToConvert;
   }
@@ -106,7 +106,6 @@ const allLinksObjArr = (mdsArray) => new Promise((resolve, reject) => {
       if (linksObjArr.length === mdsArray.length) {
         resolve(linksObjArr.flat());
       }
-      return linksObjArr.flat();
     })
     .catch((error) => {
       reject(error);
