@@ -37,9 +37,13 @@ Path con opción de validación y estadísticas: `md-links <ruta> --validate --s
 
 ### 2.2 Ejecución de función
 
-En el archivo que se requiera extraer la información se puede estructurar de la siguiente manera
+En el archivo que se requiera extraer la información se puede estructurar de la siguiente manera:
 
 ![f-mdl](./assets/images/function-mdl.PNG)
+
+Resultado: 
+
+![mdl-result](./assets/images/mdl-result.PNG)
 
 ## 3. Autora &#127808;
 
