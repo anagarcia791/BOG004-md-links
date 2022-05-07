@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// CommonJS Modules para: node method | mdlinks | chalk
+// CommonJS Modules para: node method | mdlinks
 const process = require('process');
 const mdlinks = require('./index');
 const finalOutput = require('./utils');
