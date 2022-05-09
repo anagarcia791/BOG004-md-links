@@ -21,30 +21,31 @@ Esta aplicación se puede ejecutar a través de la terminal con la siguiente est
 
 Solo con el path: `md-links <ruta>` 
 
-![just-path](./assets/images/just-path.PNG)
+![just-path](https://github.com/anagarcia791/BOG004-md-links/blob/main/assets/images/just-path.PNG)
 
 Path con opción de estadísticas: `md-links <ruta> --stats`
 
-![path-stats](./assets/images/path-stats.PNG)
+![path-stats](https://github.com/anagarcia791/BOG004-md-links/blob/main/assets/images/path-stats.PNG)
 
 Path con opción de validación: `md-links <ruta> --validate`
 
-![validated-path](./assets/images/validated-path.PNG)
+![validated-path](https://github.com/anagarcia791/BOG004-md-links/blob/main/assets/images/validated-path.PNG)
 
 Path con opción de validación y estadísticas: `md-links <ruta> --validate --stats` o `md-links <ruta> --stats --validate`
 
-![path-validated-stats](./assets/images/path-validated-stats.PNG)
+![path-validated-stats](https://github.com/anagarcia791/BOG004-md-links/blob/main/assets/images/path-validated-stats.PNG)
 
 ### 2.2 Ejecución de función
 
 En el archivo que se requiera extraer la información se puede estructurar de la siguiente manera:
 
-![f-mdl](./assets/images/function-mdl.PNG)
+![f-mdl](https://github.com/anagarcia791/BOG004-md-links/blob/main/assets/images/function-mdl.PNG)
 
 Resultado: 
 
-![mdl-result](./assets/images/mdl-result.PNG)
+![mdl-result](https://github.com/anagarcia791/BOG004-md-links/blob/main/assets/images/mdl-result.PNG)
 
-## 3. Autora &#127808;
+## 3. Diagrama de fluja - Autora &#127808;
 
-Ana Margarita Garcia &#128125;
+- Ver [diagrama](https://www.figma.com/file/MDQuiIQVCryMmyMfVnr9tq/flow-md-links?node-id=0%3A1)
+- Hecho por Ana Margarita Garcia &#128125;
