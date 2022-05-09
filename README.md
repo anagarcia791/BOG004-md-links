@@ -11,7 +11,7 @@ Esta librería sirve para devolver los enlaces o direcciones URL contenidos en u
 
 Ejecutar en la terminal el comando
 
-- npm  install -g 
+- npm  install md-links-anagarcia791
 
 ## 2. Guia de uso &#127808;
 
