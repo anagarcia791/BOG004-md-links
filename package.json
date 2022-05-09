@@ -1,7 +1,40 @@
 {
-  "name": "md-links",
+  "name": "md-links-anagarcia791",
   "version": "0.1.0",
+  "description": "Herramienta de línea de comando permite validar URLs dentro de archivos .md",
   "engines": {
     "node": ">=14.x"
+  },
+  "scripts": {
+    "eslint": "eslint --ext .js src/ test/",
+    "stylelint": "stylelint --aei src/**/*.css",
+    "pretest": "npm run eslint",
+    "test": "jest --verbose --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anagarcia791/BOG004-md-links"
+  },
+  "keywords": [
+    "md-Links",
+    "Markdown",
+    "links",
+    "npm"
+  ],
+  "author": {
+    "name": "Ana Margarita Garcia"
+  },
+  "devDependencies": {
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "chalk": "^4.1.2",
+    "jest": "^28.0.3"
+  },
+  "bin": {
+    "md-links": "./src/cli.js"
   }
 }
