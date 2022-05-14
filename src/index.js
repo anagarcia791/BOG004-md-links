@@ -1,12 +1,12 @@
+// CommonJS Modules para: funciones de node-methods.js
+const { converterPath, pathValidation, mdsArraysValidation } = require('./node-methods');
+
 /**
  *
  * @param {*} path
  * @param {*} options
  * @returns
  */
-
-// CommonJS Modules para: funciones de node-methods.js
-const { converterPath, pathValidation, mdsArraysValidation } = require('./node-methods');
 
 // funcion mdLinks
 const mdLinks = (path, options = { validate: false }) => new Promise((resolve, reject) => {
