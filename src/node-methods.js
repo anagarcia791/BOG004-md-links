@@ -1,9 +1,3 @@
-/**
- *
- * @param {*} pathToConvert
- * @returns
- */
-
 // CommonJS Modules para: node methods filesystem - path | axios
 const fs = require('fs');
 const path = require('path');

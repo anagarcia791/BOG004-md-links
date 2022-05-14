@@ -1,8 +1,3 @@
-/**
- *
- * @param {*} linksObjArr
- */
-
 // CommonJS Modules para: chalk
 const chalk = require('chalk');
 
@@ -71,6 +66,12 @@ const outputWithVS = (linksObjArr) => {
   const brokenLinks = broken.length;
   console.table({ TOTAL: totalLinks, UNIQUE: uniqueLinks, BROKEN: brokenLinks });
 };
+
+/**
+ *
+ * @param {*} args
+ * @param {*} linksObjectArr
+ */
 
 // funcion primer output sin options
 const finalOutput = (args, linksObjectArr) => {
